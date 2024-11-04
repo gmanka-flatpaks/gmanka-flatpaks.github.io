@@ -1,0 +1,43 @@
+name: build flatpak
+on: [push, pull_request]
+jobs:
+  flatpak:
+    name: build flatpak
+    runs-on: ubuntu-latest
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:freedesktop-24.08
+      options: --privileged
+    permissions:
+      contents: write
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: deps
+        run: |
+          sudo dnf install -y node
+      - name: pgp import
+        run: |
+          echo '${{ secrets.private_gpg }}' | gpg --import
+      - name: clone repo
+        run: |
+          git clone https://github.com/gmanka-flatpaks/dev.neovide.neovide
+          flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          manifest-path: dev.neovide.neovide/dev.neovide.neovide.yml
+          gpg-sign: gmankab@gmail.com
+          build-bundle: ${{ !env.ACT }}
+      - name: write metadata
+        run: |
+          mv repo deploy/repo
+          mkdir -p ./deploy/repo/refs/remotes ./deploy/repo/refs/mirrors
+          touch ./deploy/repo/refs/remotes/.gitkeep ./deploy/repo/refs/mirrors/.gitkeep
+          flatpak build-update-repo --prune --prune-depth=0 --gpg-sign=gmankab@gmail.com --generate-static-deltas ./deploy/repo
+      - name: deploy repo
+        uses: peaceiris/actions-gh-pages@v4
+        if: ${{ !env.ACT }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./deploy
+
