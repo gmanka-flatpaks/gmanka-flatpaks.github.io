@@ -22,7 +22,6 @@ jobs:
       - name: clone repo
         run: |
           git clone https://github.com/gmanka-flatpaks/dev.neovide.neovide
-          flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
           manifest-path: dev.neovide.neovide/dev.neovide.neovide.yml
