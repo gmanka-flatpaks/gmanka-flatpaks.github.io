@@ -1,39 +1,74 @@
 name: build flatpak
 on: [push, pull_request]
 jobs:
-  flatpak:
-    name: build flatpak
+  flatpak-build:
+    name: flatpak build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repos: [
+          'dev.neovide.neovide',
+          'com.adobe.photoshop2021',
+        ]
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:freedesktop-24.08
+      options: --privileged
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: build
+        run: |
+          dnf install -y node flatpak flatpak-builder
+          echo '${{ secrets.private_gpg }}' | gpg --import
+          git clone 'https://github.com/gmanka-flatpaks/${{ matrix.repos }}'
+          flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          flatpak-builder --user --gpg-sign=gmankab@gmail.com --install-deps-from=flathub --repo=repo ./build '${{ matrix.repos }}/${{ matrix.repos }}.yml'
+      - name: upload artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ !env.ACT }}
+        with:
+          name: ${{ matrix.repos }}-repo
+          path: repo
+  deployment:
+    name: deployment
+    needs:
+      flatpak-build
     runs-on: ubuntu-latest
     container:
       image: bilelmoussaoui/flatpak-github-actions:freedesktop-24.08
       options: --privileged
     permissions:
       contents: write
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
     steps:
       - uses: actions/checkout@v4
       - name: deps
         run: |
-          sudo dnf install -y node
-      - name: pgp import
-        run: |
+          dnf install -y node flatpak flatpak-builder
           echo '${{ secrets.private_gpg }}' | gpg --import
-      - name: clone repo
-        run: |
-          git clone https://github.com/gmanka-flatpaks/dev.neovide.neovide
-      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+      - name: act download artifacts
+        uses: actions/download-artifact@v4
+        if: ${{ env.ACT }}
         with:
-          manifest-path: dev.neovide.neovide/dev.neovide.neovide.yml
-          gpg-sign: gmankab@gmail.com
-          build-bundle: ${{ !env.ACT }}
+          github-token: ${{ secrets.gh_pat }}
+          run-id: 12618822512
+          path: artifacts
+      - name: github download artifacts
+        uses: actions/download-artifact@v4
+        if: ${{ !env.ACT }}
+        with:
+          path: artifacts
       - name: write metadata
         run: |
-          mv repo deploy/repo
-          mkdir -p ./deploy/repo/refs/remotes ./deploy/repo/refs/mirrors
-          touch ./deploy/repo/refs/remotes/.gitkeep ./deploy/repo/refs/mirrors/.gitkeep
-          flatpak build-update-repo --prune --prune-depth=0 --gpg-sign=gmankab@gmail.com --generate-static-deltas ./deploy/repo
-      - name: deploy repo
+          mkdir ./deploy/repo
+          ostree init --mode=archive-z2 --repo ./deploy/repo
+          for dir in ./artifacts/* ; do
+            mkdir -p $dir/refs/remotes $dir/refs/mirrors
+            touch $dir/refs/remotes/.gitkeep $dir/refs/mirrors/.gitkeep
+            ostree --repo=./deploy/repo pull-local $dir
+          done
+          flatpak build-update-repo --gpg-sign=gmankab@gmail.com ./deploy/repo
+      - name: deploy to github pages
         uses: peaceiris/actions-gh-pages@v4
         if: ${{ !env.ACT }}
         with:
