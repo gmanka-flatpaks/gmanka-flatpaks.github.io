@@ -5,7 +5,7 @@ this repo has github workflow, that builds and deploys flatpaks
 ### add repo
 
 ```shell
-flatpak remote-add gmanka https://gmanka-flatpaks.github.io/gmanka.flatpakrepo
+sudo flatpak remote-add gmanka https://gmanka-flatpaks.github.io/gmanka.flatpakrepo
 ```
 
 ### list available apps
