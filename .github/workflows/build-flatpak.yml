@@ -9,6 +9,7 @@ jobs:
         repos: [
           'dev.neovide.neovide',
           'com.adobe.photoshop2021',
+          'com.adobe.photoshop2022',
         ]
     container:
       image: bilelmoussaoui/flatpak-github-actions:freedesktop-24.08
