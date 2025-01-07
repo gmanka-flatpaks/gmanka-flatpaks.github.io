@@ -20,6 +20,12 @@ flatpak remote-ls gmanka
 flatpak install gmanka com.adobe.photoshop2021
 ```
 
+### install adobe photoshop 2022
+
+```shell
+flatpak install gmanka com.adobe.photoshop2022
+```
+
 ### install neovide
 
 ```shell
@@ -29,5 +35,6 @@ flatpak install gmanka dev.neovide.neovide
 ### manifests
 
 - https://github.com/gmanka-flatpaks/com.adobe.photoshop2021
+- https://github.com/gmanka-flatpaks/com.adobe.photoshop2022
 - https://github.com/gmanka-flatpaks/dev.neovide.neovide
 
