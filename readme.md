@@ -14,27 +14,25 @@ sudo flatpak remote-add gmanka https://gmanka-flatpaks.github.io/gmanka.flatpakr
 flatpak remote-ls gmanka
 ```
 
-### install adobe photoshop 2021
+this command will list apps:
 
 ```shell
-flatpak install gmanka com.adobe.photoshop2021
+com.adobe.photoshop2021
+com.adobe.photoshop2022
+com.adobe.photoshop2023
+dev.neovide.neovide
 ```
 
-### install adobe photoshop 2022
+### install app
 
 ```shell
-flatpak install gmanka com.adobe.photoshop2022
-```
-
-### install neovide
-
-```shell
-flatpak install gmanka dev.neovide.neovide
+flatpak install gmanka APP
 ```
 
 ### manifests
 
 - https://github.com/gmanka-flatpaks/com.adobe.photoshop2021
 - https://github.com/gmanka-flatpaks/com.adobe.photoshop2022
-- https://github.com/gmanka-flatpaks/dev.neovide.neovide
+- https://github.com/gmanka-flatpaks/com.adobe.photoshop2023
+- https://github.com/flathub/dev.neovide.neovide
 
