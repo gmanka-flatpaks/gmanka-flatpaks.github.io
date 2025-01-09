@@ -1,16 +1,18 @@
 name: build flatpak
-on: [push, pull_request]
+on: |
+  push
+  pull_request
 jobs:
   flatpak-build:
     name: flatpak build
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        repos: [
-          'dev.neovide.neovide',
-          'com.adobe.photoshop2021',
-          'com.adobe.photoshop2022',
-        ]
+        repos: |
+          dev.neovide.neovide
+          com.adobe.photoshop2021
+          com.adobe.photoshop2022
+          com.adobe.photoshop2023
     container:
       image: bilelmoussaoui/flatpak-github-actions:freedesktop-24.08
       options: --privileged
