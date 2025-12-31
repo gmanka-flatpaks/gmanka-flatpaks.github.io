@@ -1,0 +1,34 @@
+on:
+  workflow_call:
+    inputs:
+      runner_name:
+        required: true
+        type: string
+      runner_arch:
+        required: true
+        type: string
+      flatpak_name:
+        required: true
+        type: string
+      flatpak_id:
+        required: true
+        type: string
+jobs:
+  build-bundle:
+    name: ${{ inputs.flatpak_name }} ${{ inputs.runner_arch }} build-bundle
+    runs-on: ${{ inputs.runner_name }}
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08
+      options: --privileged
+    steps:
+      - name: build
+        run: |
+          git clone https://github.com/${{ github.repository_owner }}/${{ inputs.flatpak_id }}
+          flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+          flatpak-builder --disable-rofiles-fuse --user --install-deps-from=flathub --repo=repo build ${{ inputs.flatpak_id }}/${{ inputs.flatpak_id }}.yml
+          flatpak build-bundle repo ${{ inputs.flatpak_name }}-${{ inputs.runner_arch }}.flatpak ${{ inputs.flatpak_id }}
+      - name: upload bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.flatpak_name }}-${{ inputs.runner_arch }}
+          path: ${{ inputs.flatpak_name }}-${{ inputs.runner_arch }}.flatpak

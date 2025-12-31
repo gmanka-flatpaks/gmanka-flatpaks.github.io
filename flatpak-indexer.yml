@@ -1,0 +1,18 @@
+koji_config: brew
+redis_url: redis://localhost:6379
+
+registries:
+  quay:
+    public_url: https://quay.io/
+    datasource: direct
+    repositories:
+      - gmanka/codex
+      - gmanka/gitui
+
+indexes:
+  latest:
+    output: pages/index/static
+    registry: quay
+    architecture_expand: ['']
+    tag: latest
+    extract_icons: false

@@ -1,0 +1,46 @@
+on:
+  workflow_dispatch: {}
+jobs:
+  flatpak-build-helper:
+    strategy:
+      matrix:
+        flatpak:
+          - name: codex
+            id: com.openai.codex
+          - name: gitui
+            id: io.github.gitui_org.gitui
+        runner:
+          - name: ubuntu-24.04
+            arch: x86_64
+          - name: ubuntu-24.04-arm
+            arch: aarch64
+    name: ${{ matrix.flatpak.name }} ${{ matrix.runner.arch }}
+    uses: ./.github/workflows/flatpak-build-helper.yml
+    with:
+      runner_name: ${{ matrix.runner.name }}
+      runner_arch: ${{ matrix.runner.arch }}
+      flatpak_name: ${{ matrix.flatpak.name }}
+      flatpak_id: ${{ matrix.flatpak.id }}
+  push-oci:
+    strategy:
+      matrix:
+        flatpak:
+          - name: codex
+            id: com.openai.codex
+          - name: gitui
+            id: io.github.gitui_org.gitui
+    needs: flatpak-build-helper
+    permissions:
+      packages: write
+    secrets: inherit
+    uses: ./.github/workflows/push-oci.yml
+    with:
+      flatpak_name: ${{ matrix.flatpak.name }}
+      flatpak_id: ${{ matrix.flatpak.id }}
+  indexer:
+    needs: push-oci
+    permissions:
+      pages: write
+      id-token: write
+      packages: read
+    uses: ./.github/workflows/indexer.yml

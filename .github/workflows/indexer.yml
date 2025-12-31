@@ -1,0 +1,34 @@
+on:
+  workflow_call: {}
+permissions:
+  pages: write
+  id-token: write
+  packages: read
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: '3.13'
+      - uses: shogo82148/actions-setup-redis@v1
+        id: redis
+        with:
+          redis-version: latest
+      - name: dependencies
+        run: |
+          mkdir -p pages/index
+          sudo apt update
+          sudo apt install -y libkrb5-dev
+          uv venv
+          uv pip install git+https://github.com/owtaylor/flatpak-indexer.git
+      - name: run flatpak-indexer
+        run: uv run flatpak-indexer -c flatpak-indexer.yml index
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: pages
+      - uses: actions/deploy-pages@v4
