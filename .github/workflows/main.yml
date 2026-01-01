@@ -12,6 +12,8 @@ jobs:
             id: com.openai.codex
           - name: gitui
             id: io.github.gitui_org.gitui
+          - name: brightnessctl
+            id: io.github.hummer12007.brightnessctl
         runner:
           - name: ubuntu-24.04
             arch: x86_64
@@ -34,6 +36,8 @@ jobs:
             id: com.openai.codex
           - name: gitui
             id: io.github.gitui_org.gitui
+          - name: brightnessctl
+            id: io.github.hummer12007.brightnessctl
     needs: flatpak-build-helper
     permissions:
       packages: write

@@ -9,6 +9,7 @@ registries:
       - gmanka/gh
       - gmanka/codex
       - gmanka/gitui
+      - gmanka/brightnessctl
 indexes:
   latest:
     output: pages/index/static
