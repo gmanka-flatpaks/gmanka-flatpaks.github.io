@@ -13,6 +13,10 @@ on:
       flatpak_id:
         required: true
         type: string
+      branch:
+        default: master
+        required: false
+        type: string
 jobs:
   build:
     name: ${{ inputs.flatpak_name }} ${{ inputs.runner_arch }} build-bundle
@@ -49,7 +53,7 @@ jobs:
           sudo swapon --priority 100 $dev
       - name: build
         run: |
-          sudo podman run --privileged --env=runner_arch=${{ inputs.runner_arch }} --env=flatpak_name=${{ inputs.flatpak_name }} --env=flatpak_id=${{ inputs.flatpak_id }} -v $PWD:/build:z -w /build ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08 bash flatpak-build-helper.sh
+          sudo podman run --privileged --env=runner_arch=${{ inputs.runner_arch }} --env=flatpak_name=${{ inputs.flatpak_name }} --env=flatpak_id=${{ inputs.flatpak_id }} --env=branch=${{ inputs.branch }} -v $PWD:/build:z -w /build ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08 bash flatpak-build-helper.sh
       - name: upload
         uses: actions/upload-artifact@v4
         with:
