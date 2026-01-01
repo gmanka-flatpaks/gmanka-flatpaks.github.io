@@ -6,6 +6,8 @@ jobs:
       fail-fast: false
       matrix:
         flatpak:
+          - name: gh
+            id: com.github.cli
           - name: codex
             id: com.openai.codex
           - name: gitui
@@ -26,6 +28,8 @@ jobs:
     strategy:
       matrix:
         flatpak:
+          - name: gh
+            id: com.github.cli
           - name: codex
             id: com.openai.codex
           - name: gitui

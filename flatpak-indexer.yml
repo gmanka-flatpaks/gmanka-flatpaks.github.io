@@ -6,9 +6,9 @@ registries:
     public_url: https://quay.io/
     datasource: direct
     repositories:
+      - gmanka/gh
       - gmanka/codex
       - gmanka/gitui
-
 indexes:
   latest:
     output: pages/index/static
