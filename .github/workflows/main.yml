@@ -1,19 +1,19 @@
 on:
   workflow_dispatch: {}
 jobs:
-  flatpak-build-helper:
+  build-multiarch:
     strategy:
       fail-fast: false
       matrix:
         flatpak:
-          - name: gh
-            id: com.github.cli
-          - name: codex
-            id: com.openai.codex
           - name: gitui
             id: io.github.gitui_org.gitui
           - name: brightnessctl
             id: io.github.hummer12007.brightnessctl
+          - name: gh
+            id: com.github.cli
+          - name: codex
+            id: com.openai.codex
         runner:
           - name: ubuntu-24.04
             arch: x86_64
@@ -26,19 +26,34 @@ jobs:
       runner_arch: ${{ matrix.runner.arch }}
       flatpak_name: ${{ matrix.flatpak.name }}
       flatpak_id: ${{ matrix.flatpak.id }}
+  build-x86_64:
+    strategy:
+      matrix:
+        flatpak:
+          - name: photoshop2021
+            id: com.adobe.photoshop2021
+    name: ${{ matrix.flatpak.name }} ${{ matrix.runner.arch }}
+    uses: ./.github/workflows/flatpak-build-helper.yml
+    with:
+      runner_name: ubuntu-24.04
+      runner_arch: x86_64
+      flatpak_name: ${{ matrix.flatpak.name }}
+      flatpak_id: ${{ matrix.flatpak.id }}
   push-oci:
     strategy:
       matrix:
         flatpak:
-          - name: gh
-            id: com.github.cli
-          - name: codex
-            id: com.openai.codex
           - name: gitui
             id: io.github.gitui_org.gitui
           - name: brightnessctl
             id: io.github.hummer12007.brightnessctl
-    needs: flatpak-build-helper
+          - name: gh
+            id: com.github.cli
+          - name: codex
+            id: com.openai.codex
+          - name: photoshop2021
+            id: com.adobe.photoshop2021
+    needs: [build-multiarch, build-x86_64]
     permissions:
       packages: write
     secrets: inherit

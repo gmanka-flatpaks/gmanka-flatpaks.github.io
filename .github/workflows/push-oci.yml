@@ -25,6 +25,7 @@ jobs:
           ostree init --mode=archive-z2 --repo repo
           podman manifest create app
           for arch in x86_64 aarch64; do
+            [ -d artifacts/${{ inputs.flatpak_name }}-${arch} ] || continue
             flatpak build-import-bundle repo artifacts/${{ inputs.flatpak_name }}-${arch}/${{ inputs.flatpak_name }}-${arch}.flatpak
             flatpak build-bundle --oci --arch=$arch repo oci ${{ inputs.flatpak_id }}
             skopeo copy "oci:oci:app/${{ inputs.flatpak_id }}/${arch}/master"  containers-storage:app:$arch
