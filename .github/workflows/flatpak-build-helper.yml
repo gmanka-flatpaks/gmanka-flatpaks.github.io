@@ -14,20 +14,27 @@ on:
         required: true
         type: string
 jobs:
-  build-bundle:
+  build:
     name: ${{ inputs.flatpak_name }} ${{ inputs.runner_arch }} build-bundle
     runs-on: ${{ inputs.runner_name }}
-    container:
-      image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08
-      options: --privileged
     steps:
+      - uses: actions/checkout@v6
+      - name: deps
+        run: |
+          sudo apt update
+          sudo apt install -y linux-modules-extra-$(uname -r)
+          git clone https://github.com/${{ github.repository_owner }}/${{ inputs.flatpak_id }}
+          sudo podman pull ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08
+      - name: zram
+        run: |
+          sudo modprobe zram
+          dev=$(sudo zramctl --find --algorithm zstd --size 32G)
+          sudo mkswap $dev
+          sudo swapon --priority 100 $dev
       - name: build
         run: |
-          git clone https://github.com/${{ github.repository_owner }}/${{ inputs.flatpak_id }}
-          flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-          flatpak-builder --disable-rofiles-fuse --user --install-deps-from=flathub --repo=repo build ${{ inputs.flatpak_id }}/${{ inputs.flatpak_id }}.yml
-          flatpak build-bundle repo ${{ inputs.flatpak_name }}-${{ inputs.runner_arch }}.flatpak ${{ inputs.flatpak_id }}
-      - name: upload bundle
+          sudo podman run --privileged --env=runner_arch=${{ inputs.runner_arch }} --env=flatpak_name=${{ inputs.flatpak_name }} --env=flatpak_id=${{ inputs.flatpak_id }} -v $PWD:/build:z -w /build ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08 bash flatpak-build-helper.sh
+      - name: upload
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.flatpak_name }}-${{ inputs.runner_arch }}

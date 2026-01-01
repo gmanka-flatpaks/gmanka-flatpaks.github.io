@@ -3,6 +3,7 @@ on:
 jobs:
   flatpak-build-helper:
     strategy:
+      fail-fast: false
       matrix:
         flatpak:
           - name: codex
