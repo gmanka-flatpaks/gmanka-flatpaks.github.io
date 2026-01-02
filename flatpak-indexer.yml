@@ -1,15 +1,15 @@
 koji_config: brew
 redis_url: redis://localhost:6379
-
 registries:
   quay:
     public_url: https://quay.io/
     datasource: direct
     repositories:
+      - gmanka/brightnessctl
       - gmanka/gh
       - gmanka/codex
       - gmanka/gitui
-      - gmanka/brightnessctl
+      - gmanka/photoshop2021
 indexes:
   latest:
     output: pages/index/static
