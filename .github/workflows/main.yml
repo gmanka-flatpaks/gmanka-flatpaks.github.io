@@ -6,6 +6,10 @@ jobs:
       fail-fast: false
       matrix:
         flatpak:
+          - name: fish
+            id: org.freedesktop.Sdk.Extension.fish
+            type: runtime
+            branch: 25.08
           - name: gitui
             id: io.github.gitui_org.gitui
           - name: brightnessctl
@@ -49,6 +53,10 @@ jobs:
     strategy:
       matrix:
         flatpak:
+          - name: fish
+            id: org.freedesktop.Sdk.Extension.fish
+            type: runtime
+            branch: 25.08
           - name: gitui
             id: io.github.gitui_org.gitui
           - name: brightnessctl

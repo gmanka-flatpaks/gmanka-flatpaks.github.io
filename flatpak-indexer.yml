@@ -5,6 +5,7 @@ registries:
     public_url: https://quay.io/
     datasource: direct
     repositories:
+      - gmanka/fish
       - gmanka/brightnessctl
       - gmanka/gh
       - gmanka/codex
