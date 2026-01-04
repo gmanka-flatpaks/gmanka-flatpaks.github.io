@@ -10,6 +10,8 @@ registries:
       - gmanka/codex
       - gmanka/gitui
       - gmanka/photoshop2021
+      - gmanka/photoshop2022
+      - gmanka/photoshop2023
 indexes:
   latest:
     output: pages/index/static
