@@ -13,6 +13,8 @@ registries:
       - gmanka/photoshop2021
       - gmanka/photoshop2022
       - gmanka/photoshop2023
+      - gmanka/handyfox
+      - gmanka/firefox-systemconfig
 indexes:
   latest:
     output: pages/index/static
