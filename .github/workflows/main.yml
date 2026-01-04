@@ -18,6 +18,14 @@ jobs:
             id: com.github.cli
           - name: codex
             id: com.openai.codex
+          - name: handyfox
+            id: io.github.pocketblue.handyfox
+            repo_url: https://github.com/pocketblue/handyfox
+          - name: firefox-systemconfig
+            id: org.mozilla.firefox.systemconfig
+            type: runtime
+            branch: stable
+            repo_url: https://github.com/pocketblue/firefox-systemconfig
         runner:
           - name: ubuntu-24.04
             arch: x86_64
@@ -32,6 +40,7 @@ jobs:
       flatpak_id: ${{ matrix.flatpak.id }}
       type: ${{ matrix.flatpak.type || 'app' }}
       branch: ${{ matrix.flatpak.branch || 'master' }}
+      repo_url: ${{ matrix.flatpak.repo_url }}
   build-x86_64:
     strategy:
       matrix:
@@ -71,6 +80,13 @@ jobs:
             id: com.adobe.photoshop2022
           - name: photoshop2023
             id: com.adobe.photoshop2023
+          - name: handyfox
+            id: io.github.pocketblue.handyfox
+            repo_url: https://github.com/pocketblue/handyfox
+          - name: firefox-systemconfig
+            id: org.mozilla.firefox.systemconfig
+            type: runtime
+            branch: stable
     needs: [build-multiarch, build-x86_64]
     permissions:
       packages: write
