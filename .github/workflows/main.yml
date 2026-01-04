@@ -32,6 +32,10 @@ jobs:
         flatpak:
           - name: photoshop2021
             id: com.adobe.photoshop2021
+          - name: photoshop2022
+            id: com.adobe.photoshop2022
+          - name: photoshop2023
+            id: com.adobe.photoshop2023
     name: ${{ matrix.flatpak.name }} ${{ matrix.runner.arch }}
     uses: ./.github/workflows/flatpak-build-helper.yml
     with:
@@ -53,6 +57,10 @@ jobs:
             id: com.openai.codex
           - name: photoshop2021
             id: com.adobe.photoshop2021
+          - name: photoshop2022
+            id: com.adobe.photoshop2022
+          - name: photoshop2023
+            id: com.adobe.photoshop2023
     needs: [build-multiarch, build-x86_64]
     permissions:
       packages: write
