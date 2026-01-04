@@ -11,6 +11,10 @@ on:
         default: master
         required: false
         type: string
+      type:
+        default: app
+        required: false
+        type: string
 jobs:
   push-oci:
     runs-on: ubuntu-24.04
@@ -31,8 +35,8 @@ jobs:
           for arch in x86_64 aarch64; do
             [ -d artifacts/${{ inputs.flatpak_name }}-${arch} ] || continue
             flatpak build-import-bundle repo artifacts/${{ inputs.flatpak_name }}-${arch}/${{ inputs.flatpak_name }}-${arch}.flatpak
-            flatpak build-bundle --oci --arch=$arch repo oci ${{ inputs.flatpak_id }}
-            skopeo copy "oci:oci:app/${{ inputs.flatpak_id }}/${arch}/${{ inputs.branch }}"  containers-storage:app:$arch
+            flatpak build-bundle --oci repo oci "${{ inputs.type }}/${{ inputs.flatpak_id }}/${arch}/${{ inputs.branch }}"
+            skopeo copy "oci:oci:${{ inputs.type }}/${{ inputs.flatpak_id }}/${arch}/${{ inputs.branch }}" containers-storage:app:$arch
             podman manifest add app containers-storage:app:$arch
           done
           podman login quay.io -u gmankab -p ${{ secrets.QUAY_TOKEN }}

@@ -26,6 +26,8 @@ jobs:
       runner_arch: ${{ matrix.runner.arch }}
       flatpak_name: ${{ matrix.flatpak.name }}
       flatpak_id: ${{ matrix.flatpak.id }}
+      type: ${{ matrix.flatpak.type || 'app' }}
+      branch: ${{ matrix.flatpak.branch || 'master' }}
   build-x86_64:
     strategy:
       matrix:
@@ -69,6 +71,8 @@ jobs:
     with:
       flatpak_name: ${{ matrix.flatpak.name }}
       flatpak_id: ${{ matrix.flatpak.id }}
+      type: ${{ matrix.flatpak.type || 'app' }}
+      branch: ${{ matrix.flatpak.branch || 'master' }}
   indexer:
     needs: push-oci
     permissions:
