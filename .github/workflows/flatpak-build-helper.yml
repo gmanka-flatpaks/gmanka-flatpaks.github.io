@@ -21,6 +21,9 @@ on:
         default: app
         required: false
         type: string
+      repo_url:
+        type: string
+        required: false
 jobs:
   build:
     name: ${{ inputs.flatpak_name }} ${{ inputs.runner_arch }} build-bundle
@@ -47,8 +50,12 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y linux-modules-extra-$(uname -r)
-          git clone https://github.com/${{ github.repository_owner }}/${{ inputs.flatpak_id }}
           sudo podman pull ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-25.08
+          if [ -n '${{ inputs.repo_url }}' ]; then
+            git clone ${{ inputs.repo_url }} ${{ inputs.flatpak_id }}
+          else
+            git clone https://github.com/${{ github.repository_owner }}/${{ inputs.flatpak_id }}
+          fi
       - name: zram
         run: |
           sudo modprobe zram
