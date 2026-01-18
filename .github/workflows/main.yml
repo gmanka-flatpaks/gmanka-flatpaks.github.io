@@ -51,7 +51,7 @@ jobs:
             id: com.adobe.photoshop2022
           - name: photoshop2023
             id: com.adobe.photoshop2023
-    name: ${{ matrix.flatpak.name }} ${{ matrix.runner.arch }}
+    name: ${{ matrix.flatpak.name }} x86_64
     uses: ./.github/workflows/flatpak-build-helper.yml
     with:
       runner_name: ubuntu-24.04
