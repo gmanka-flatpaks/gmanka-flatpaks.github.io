@@ -1,106 +1,43 @@
 on:
   workflow_dispatch: {}
 jobs:
-  build-multiarch:
+  checkstate:
+    uses: ./.github/workflows/checkstate.yml
+  build:
+    if: ${{ needs.checkstate.outputs.to_build != '[]' }}
+    needs: checkstate
     strategy:
       fail-fast: false
       matrix:
-        flatpak:
-          - name: fish
-            id: org.freedesktop.Sdk.Extension.fish
-            type: runtime
-            branch: 25.08
-          - name: rigsofrods
-            id: org.rigsofrods.RigsOfRods
-          - name: gitui
-            id: io.github.gitui_org.gitui
-          - name: brightnessctl
-            id: io.github.hummer12007.brightnessctl
-          - name: gh
-            id: com.github.cli
-          - name: codex
-            id: com.openai.codex
-          - name: handyfox
-            id: io.github.pocketblue.handyfox
-            repo_url: https://github.com/pocketblue/handyfox
-          - name: firefox-systemconfig
-            id: org.mozilla.firefox.systemconfig
-            type: runtime
-            branch: stable
-            repo_url: https://github.com/pocketblue/firefox-systemconfig
-        runner:
-          - name: ubuntu-24.04
-            arch: x86_64
-          - name: ubuntu-24.04-arm
-            arch: aarch64
-    name: ${{ matrix.flatpak.name }} ${{ matrix.runner.arch }}
+        include: ${{ fromJSON(needs.checkstate.outputs.to_build) }}
+    name: ${{ matrix.name }} ${{ matrix.arch }}
     uses: ./.github/workflows/build.yml
     with:
-      runner_name: ${{ matrix.runner.name }}
-      runner_arch: ${{ matrix.runner.arch }}
-      flatpak_name: ${{ matrix.flatpak.name }}
-      flatpak_id: ${{ matrix.flatpak.id }}
-      type: ${{ matrix.flatpak.type || 'app' }}
-      branch: ${{ matrix.flatpak.branch || 'master' }}
-      repo_url: ${{ matrix.flatpak.repo_url }}
-  build-x86_64:
-    strategy:
-      matrix:
-        flatpak:
-          - name: photoshop2021
-            id: com.adobe.photoshop2021
-          - name: photoshop2022
-            id: com.adobe.photoshop2022
-          - name: photoshop2023
-            id: com.adobe.photoshop2023
-    name: ${{ matrix.flatpak.name }} x86_64
-    uses: ./.github/workflows/build.yml
-    with:
-      runner_name: ubuntu-24.04
-      runner_arch: x86_64
-      flatpak_name: ${{ matrix.flatpak.name }}
-      flatpak_id: ${{ matrix.flatpak.id }}
+      flatpak_name: ${{ matrix.name }}
+      flatpak_id: ${{ matrix.id }}
+      type: ${{ matrix.type }}
+      branch: ${{ matrix.branch }}
+      repo_url: ${{ matrix.repo_url }}
+      runner_name: ${{ matrix.runner }}
+      runner_arch: ${{ matrix.arch }}
   push-oci:
-    strategy:
-      matrix:
-        flatpak:
-          - name: fish
-            id: org.freedesktop.Sdk.Extension.fish
-            type: runtime
-            branch: 25.08
-          - name: rigsofrods
-            id: org.rigsofrods.RigsOfRods
-          - name: gitui
-            id: io.github.gitui_org.gitui
-          - name: brightnessctl
-            id: io.github.hummer12007.brightnessctl
-          - name: gh
-            id: com.github.cli
-          - name: codex
-            id: com.openai.codex
-          - name: photoshop2021
-            id: com.adobe.photoshop2021
-          - name: photoshop2022
-            id: com.adobe.photoshop2022
-          - name: photoshop2023
-            id: com.adobe.photoshop2023
-          - name: handyfox
-            id: io.github.pocketblue.handyfox
-            repo_url: https://github.com/pocketblue/handyfox
-          - name: firefox-systemconfig
-            id: org.mozilla.firefox.systemconfig
-            type: runtime
-            branch: stable
-    needs: [build-multiarch, build-x86_64]
+    needs:
+      - checkstate
+      - build
     permissions:
       packages: write
     secrets: inherit
+    if: ${{ needs.checkstate.outputs.to_push != '[]' }}
+    strategy:
+      matrix:
+        include: ${{ fromJSON(needs.checkstate.outputs.to_push) }}
     uses: ./.github/workflows/push-oci.yml
     with:
-      flatpak_name: ${{ matrix.flatpak.name }}
-      flatpak_id: ${{ matrix.flatpak.id }}
-      type: ${{ matrix.flatpak.type || 'app' }}
-      branch: ${{ matrix.flatpak.branch || 'master' }}
+      flatpak_name: ${{ matrix.name }}
+      flatpak_id: ${{ matrix.id }}
+      commit: ${{ matrix.commit }}
+      branch: ${{ matrix.branch }}
+      type: ${{ matrix.type }}
   indexer:
     needs: push-oci
     permissions:

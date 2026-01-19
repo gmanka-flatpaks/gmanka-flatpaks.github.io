@@ -7,6 +7,9 @@ on:
       flatpak_id:
         required: true
         type: string
+      commit:
+        required: true
+        type: string
       branch:
         default: master
         required: false
@@ -28,9 +31,11 @@ jobs:
           path: artifacts
       - name: push-oci
         env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
           quay_token: ${{ secrets.QUAY_TOKEN }}
           flatpak_name: ${{ inputs.flatpak_name }}
           flatpak_id: ${{ inputs.flatpak_id }}
+          commit: ${{ inputs.commit }}
           branch: ${{ inputs.branch }}
           type: ${{ inputs.type }}
         run: scripts/push-oci.sh

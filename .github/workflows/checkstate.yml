@@ -1,0 +1,20 @@
+on:
+  workflow_call:
+    outputs:
+      to_build:
+        value: ${{ jobs.checkstate.outputs.to_build }}
+      to_push:
+        value: ${{ jobs.checkstate.outputs.to_push }}
+jobs:
+  checkstate:
+    runs-on: ubuntu-latest
+    outputs:
+      to_build: ${{ steps.check.outputs.to_build }}
+      to_push: ${{ steps.check.outputs.to_push }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: check
+        uses: docker://ghcr.io/astral-sh/uv:python3.14-trixie
+        with:
+          entrypoint: uv
+          args: run --project=scripts/checkstate scripts/checkstate/checkstate.py

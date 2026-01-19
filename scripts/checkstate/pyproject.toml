@@ -1,0 +1,9 @@
+[project]
+dependencies = [
+    'dulwich',
+    'PyYAML',
+    'rich',
+]
+name = 'checkstate'
+version = '26.0.0'
+requires-python = '>=3.14'
