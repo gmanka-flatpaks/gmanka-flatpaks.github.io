@@ -21,23 +21,16 @@ jobs:
     permissions:
       packages: write
     steps:
+      - uses: actions/checkout@v6
       - uses: actions/download-artifact@v4
         with:
           pattern: ${{ inputs.flatpak_name }}-*
           path: artifacts
       - name: push-oci
-        run: |
-          sudo apt update
-          sudo apt install -y flatpak ostree
-          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
-          ostree init --mode=archive-z2 --repo repo
-          podman manifest create app
-          for arch in x86_64 aarch64; do
-            [ -d artifacts/${{ inputs.flatpak_name }}-${arch} ] || continue
-            flatpak build-import-bundle repo artifacts/${{ inputs.flatpak_name }}-${arch}/${{ inputs.flatpak_name }}-${arch}.flatpak
-            flatpak build-bundle --oci repo oci "${{ inputs.type }}/${{ inputs.flatpak_id }}/${arch}/${{ inputs.branch }}"
-            skopeo copy "oci:oci:${{ inputs.type }}/${{ inputs.flatpak_id }}/${arch}/${{ inputs.branch }}" containers-storage:app:$arch
-            podman manifest add app containers-storage:app:$arch
-          done
-          podman login quay.io -u gmankab -p ${{ secrets.QUAY_TOKEN }}
-          podman manifest push --all app docker://quay.io/gmanka/${{ inputs.flatpak_name }}:latest
+        env:
+          quay_token: ${{ secrets.QUAY_TOKEN }}
+          flatpak_name: ${{ inputs.flatpak_name }}
+          flatpak_id: ${{ inputs.flatpak_id }}
+          branch: ${{ inputs.branch }}
+          type: ${{ inputs.type }}
+        run: scripts/push-oci.sh
