@@ -28,7 +28,7 @@ jobs:
           uv venv
           uv pip install git+https://github.com/owtaylor/flatpak-indexer.git
       - name: run flatpak-indexer
-        run: uv run flatpak-indexer -c flatpak-indexer.yml index
+        run: uv run flatpak-indexer -c configs/flatpak-indexer.yml index
       - uses: actions/upload-pages-artifact@v4
         with:
           path: pages
