@@ -1,0 +1,47 @@
+on:
+  workflow_call:
+    inputs:
+      runner_name:
+        required: true
+        type: string
+      runner_arch:
+        required: true
+        type: string
+      flatpak_name:
+        required: true
+        type: string
+      flatpak_id:
+        required: true
+        type: string
+      branch:
+        default: master
+        required: false
+        type: string
+      type:
+        default: app
+        required: false
+        type: string
+      repo_url:
+        type: string
+        required: false
+jobs:
+  build:
+    name: ${{ inputs.flatpak_name }} ${{ inputs.runner_arch }} build-bundle
+    runs-on: ${{ inputs.runner_name }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: build
+        env:
+          type: ${{ inputs.type }}
+          branch: ${{ inputs.branch }}
+          repo_url: ${{ inputs.repo_url }}
+          runner_arch: ${{ inputs.runner_arch }}
+          flatpak_id: ${{ inputs.flatpak_id }}
+          flatpak_name: ${{ inputs.flatpak_name }}
+          repository_owner: ${{ github.repository_owner }}
+        run: scripts/build-setup.sh
+      - name: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.flatpak_name }}-${{ inputs.runner_arch }}
+          path: ${{ inputs.flatpak_name }}-${{ inputs.runner_arch }}.flatpak

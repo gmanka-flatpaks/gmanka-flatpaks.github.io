@@ -32,7 +32,7 @@ jobs:
           - name: ubuntu-24.04-arm
             arch: aarch64
     name: ${{ matrix.flatpak.name }} ${{ matrix.runner.arch }}
-    uses: ./.github/workflows/flatpak-build-helper.yml
+    uses: ./.github/workflows/build.yml
     with:
       runner_name: ${{ matrix.runner.name }}
       runner_arch: ${{ matrix.runner.arch }}
@@ -52,7 +52,7 @@ jobs:
           - name: photoshop2023
             id: com.adobe.photoshop2023
     name: ${{ matrix.flatpak.name }} x86_64
-    uses: ./.github/workflows/flatpak-build-helper.yml
+    uses: ./.github/workflows/build.yml
     with:
       runner_name: ubuntu-24.04
       runner_arch: x86_64
