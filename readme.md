@@ -58,14 +58,20 @@ flatpak install gmanka io.github.hummer12007.brightnessctl
 flatpak install gmanka io.github.pocketblue.handyfox
 ```
 
+### install fish extension
+
+```shell
+flatpak install gmanka org.freedesktop.Sdk.Extension.fish
+```
+
 ### install mobile config firefox extension
 
 ```shell
 flatpak install gmanka org.mozilla.firefox.systemconfig
 ```
 
-### install fish extension
+### install rigsofrods
 
 ```shell
-flatpak install gmanka org.freedesktop.Sdk.Extension.fish
+flatpak install gmanka org.rigsofrods.RigsOfRods
 ```
