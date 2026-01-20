@@ -6,6 +6,7 @@ registries:
     datasource: direct
     repositories:
       - gmanka/fish
+      - gmanka/rigsofrods
       - gmanka/brightnessctl
       - gmanka/gh
       - gmanka/codex
