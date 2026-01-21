@@ -5,17 +5,17 @@ registries:
     public_url: https://quay.io/
     datasource: direct
     repositories:
-      - gmanka/fish
-      - gmanka/rigsofrods
-      - gmanka/brightnessctl
-      - gmanka/gh
-      - gmanka/codex
-      - gmanka/gitui
       - gmanka/photoshop2021
       - gmanka/photoshop2022
       - gmanka/photoshop2023
+      - gmanka/gh
+      - gmanka/codex
+      - gmanka/gitui
+      - gmanka/brightnessctl
       - gmanka/handyfox
+      - gmanka/fish
       - gmanka/firefox-systemconfig
+      - gmanka/rigsofrods
 indexes:
   latest:
     output: pages/index/static
