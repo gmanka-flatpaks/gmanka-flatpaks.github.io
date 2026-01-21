@@ -13,6 +13,7 @@ registries:
       - gmanka/gitui
       - gmanka/brightnessctl
       - gmanka/handyfox
+      - gmanka/nchat
       - gmanka/fish
       - gmanka/firefox-systemconfig
       - gmanka/rigsofrods

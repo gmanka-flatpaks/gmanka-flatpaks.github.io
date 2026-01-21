@@ -18,6 +18,8 @@
 - name: handyfox
   id: io.github.pocketblue.handyfox
   repo_url: https://github.com/pocketblue/handyfox
+- name: nchat
+  id: io.github.d99kris.nchat
 - name: fish
   id: org.freedesktop.Sdk.Extension.fish
   type: runtime

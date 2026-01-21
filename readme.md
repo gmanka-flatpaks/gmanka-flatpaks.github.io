@@ -58,6 +58,12 @@ flatpak install gmanka io.github.hummer12007.brightnessctl
 flatpak install gmanka io.github.pocketblue.handyfox
 ```
 
+### install nchat
+
+```shell
+flatpak install gmanka io.github.d99kris.nchat
+```
+
 ### install fish extension
 
 ```shell
